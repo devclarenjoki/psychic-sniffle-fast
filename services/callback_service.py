@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 logger = logging.getLogger(__name__)
-CALLBACK_URL=os.getenv("CALLBACK_URL")
+CALLBACK_URL=os.getenv("CALLBACK_URL","https://psychic-sniffle-fast.vercel.app/v2/callback/data")
 
 async def send_http_callback(user_id: str, transaction_id: str, status_message: str):
     if not CALLBACK_URL:
