@@ -6,9 +6,13 @@ import httpx
 from datetime import datetime 
 import pytz
 from models.webhook_model import CallbackData
+from database import calls_collection
 
 logger = logging.getLogger(__name__)
-CALLBACK_URL = os.getenv("CALLBACK_URL")
+
+CALLBACK_URL = os.getenv("CALLBACK_URL","http://localhost:3000/v2/callback/data")
+# CALLBACK_URL = os.getenv("CALLBACK_URL","https://smee.io/cwip87JX9zoP2x7W")
+#CALLBACK_URL = os.getenv("CALLBACK_URL","https://smee.io/cwip87JX9zoP2x7W")
 
 async def send_http_callback(user_id: str, transaction_id: str, status_message: str):
     if not CALLBACK_URL:
@@ -19,7 +23,7 @@ async def send_http_callback(user_id: str, transaction_id: str, status_message: 
         userId=user_id,
         transactionId=transaction_id,
         status_message=status_message
-    ).model_dump_json()
+    ).model_dump()
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -33,19 +37,31 @@ async def send_http_callback(user_id: str, transaction_id: str, status_message: 
 
 async def process_callback_data(callback_data: CallbackData) -> dict[str, str]:
     try:
-        result = await users_collection.update_one(
-            {"user_id": callback_data.userId},
-            {
-                "$set": {
-                    "last_transaction_id": callback_data.transactionId,
-                    "last_transaction_status": callback_data.status_message,
-                    "updated_at": datetime.now(pytz.UTC)
-                }
-            }
-        )
+                # Create the document to be inserted
+        document_to_insert = {
+            "user_id": callback_data.userId,
+            "last_transaction_id": callback_data.transactionId,
+            "last_transaction_status": callback_data.status_message,
+            "updated_at": datetime.now(pytz.UTC),
+            # It's good practice to add a creation timestamp for new documents
+            "created_at": datetime.now(pytz.UTC)
+        }
+
+        # Perform the insert operation
+        result = await calls_collection.insert_one(document_to_insert)
+        # result = await calls_collection.update_one(
+        #     {"user_id": callback_data.userId},
+        #     {
+        #         "$set": {
+        #             "last_transaction_id": callback_data.transactionId,
+        #             "last_transaction_status": callback_data.status_message,
+        #             "updated_at": datetime.now(pytz.UTC)
+        #         }
+        #     }
+        # )
         
-        if result.modified_count == 0:
-            logger.warning(f"User {callback_data.userId} not found or not updated during callback processing.")
+        # if result.modified_count == 0:
+        #     logger.warning(f"User {callback_data.userId} not found or not updated during callback processing.")
         
         return {
             "status": "success",

@@ -18,6 +18,7 @@ db = client.events_db
 # Get the collections
 events_collection = db.events
 eventsesh_collection = db.eventsesh
+calls_collection = db.callstb
 
 # Export the collections to be used in other modules
 __all__ = ["events_collection", "eventsesh_collection"]
