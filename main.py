@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 # Import application components
 from database import events_collection, eventsesh_collection
-from routes import auth, webhook_routes
+from routes import auth, webhook_routes,callback_routes
 
 
 # Configure logging
@@ -66,6 +66,7 @@ app.add_middleware(
 app.include_router(webhook_routes.router, tags=["Webhooks"])
 # You could include other routers here, e.g., app.include_router(auth.router, tags=["Auth"])
 
+app.include_router(callback_routes.router, prefix="/v2/callback", tags=["Callbacks"])
 # WebSocket route
 #app.websocket("/ws")(websocket_serverErr.websocket_endpoint)
 

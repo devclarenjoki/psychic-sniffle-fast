@@ -10,6 +10,7 @@ from database import events_collection, eventsesh_collection
 from models import Event, EventSession, TransactionUpdate
 from services.session_checker import check_session_status
 from event_emitter import event_emitter
+from services.callback_service import send_http_callback
 
 logger = logging.getLogger(__name__)
 
@@ -74,12 +75,13 @@ async def receive_transaction_event(request: Request):
         asyncio.create_task(check_session_status(transaction_id))
 
         # Emit event for WebSocket clients
-        update_data = TransactionUpdate(
-            transactionId=transaction_id,
-            userId=session_identifier,
-            status=status
-        )
-        event_emitter.emit('transactionStatusUpdate', update_data)
+        # update_data = TransactionUpdate(
+        #     transactionId=transaction_id,
+        #     userId=session_identifier,
+        #     status=status
+        # )
+        await send_http_callback(session_identifier,transaction_id,status_message=status)
+        #event_emitter.emit('transactionStatusUpdate', update_data)
 
         return {"message": f"Transfer complete! {transaction_id}"}
 
