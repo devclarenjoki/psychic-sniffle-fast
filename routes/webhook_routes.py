@@ -7,7 +7,7 @@ import logging
 from datetime import datetime
 from fastapi import APIRouter, Request, HTTPException, status
 from database import events_collection, eventsesh_collection
-from models.models import Event, EventSession, TransactionUpdate
+# from models.models import Event, EventSession, TransactionUpdate
 from services.session_checker import check_session_status
 from event_emitter import event_emitter
 from services.callback_service import send_http_callback
