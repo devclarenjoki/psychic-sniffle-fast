@@ -7,12 +7,11 @@ from datetime import datetime
 import pytz
 from models.webhook_model import CallbackData
 from database import calls_collection
+from dotenv import load_dotenv
 
+load_dotenv()
 logger = logging.getLogger(__name__)
-
-CALLBACK_URL = os.getenv("CALLBACK_URL","http://localhost:3000/v2/callback/data")
-# CALLBACK_URL = os.getenv("CALLBACK_URL","https://smee.io/cwip87JX9zoP2x7W")
-#CALLBACK_URL = os.getenv("CALLBACK_URL","https://smee.io/cwip87JX9zoP2x7W")
+CALLBACK_URL=os.getenv("CALLBACK_URL")
 
 async def send_http_callback(user_id: str, transaction_id: str, status_message: str):
     if not CALLBACK_URL:
