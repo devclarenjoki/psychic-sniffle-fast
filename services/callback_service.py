@@ -5,7 +5,6 @@ import logging
 import httpx
 from datetime import datetime 
 import pytz
-from database import users_collection
 from models.webhook_model import CallbackData
 
 logger = logging.getLogger(__name__)
