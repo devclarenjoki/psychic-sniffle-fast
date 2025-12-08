@@ -13,13 +13,14 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 CALLBACK_URL=os.getenv("CALLBACK_URL","https://psychic-sniffle-fast.vercel.app/v2/callback/data")
 
-async def send_http_callback(user_id: str, transaction_id: str, status_message: str):
+async def send_http_callback(user_id: str, transaction_id: str, orderId:str,status_message: str):
     if not CALLBACK_URL:
         logger.warning("External CALLBACK_URL not configured. Skipping.")
         return
     
     payload = CallbackData(
         userId=user_id,
+        orderId=orderId,
         transactionId=transaction_id,
         status_message=status_message
     ).model_dump()
@@ -39,6 +40,7 @@ async def process_callback_data(callback_data: CallbackData) -> dict[str, str]:
                 # Create the document to be inserted
         document_to_insert = {
             "user_id": callback_data.userId,
+            "order_id":callback_data.orderId,
             "last_transaction_id": callback_data.transactionId,
             "last_transaction_status": callback_data.status_message,
             "updated_at": datetime.now(pytz.UTC),

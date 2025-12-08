@@ -6,6 +6,7 @@ from typing import Optional
 class CallbackData(BaseModel):
     userId: str = Field(..., min_length=1)
     transactionId: str = Field(..., min_length=1)
+    orderId: str = Field(..., min_length=1)
     status_message: str = Field(..., min_length=1, max_length=200)
 
 class WebhookData(BaseModel):
@@ -14,6 +15,17 @@ class WebhookData(BaseModel):
     userId: Optional[str] = None
     transaction_id: Optional[str] = None
     transactionId: Optional[str] = None
+
+class StatusDataOrder(BaseModel):
+    userOrderId: str = Field(..., min_length=1)
+
+
+class StatusRecordData(BaseModel):
+    # Use Field aliases to map database field names to desired output keys
+    userId: str = Field(alias="user_id")
+    orderId:str = Field(alias="order_id")
+    transactionId: str = Field(alias="last_transaction_id")
+    status_message: str = Field(alias="last_transaction_status")
 
     @model_validator(mode='after')
     def check_ids_are_present(self) -> 'WebhookData':

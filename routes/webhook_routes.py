@@ -47,6 +47,7 @@ async def receive_transaction_event(request: Request):
         status = payload.get("data", {}).get("order", {}).get("status")
         session_identifier = payload.get("data", {}).get("order", {}).get("userId")
 
+        orderId = payload.get("data", {}).get("order", {}).get("_id")
         if not status or not session_identifier:
             raise HTTPException(status_code=400, detail="Bad Request: Missing required fields (status or userId).")
 
@@ -80,7 +81,7 @@ async def receive_transaction_event(request: Request):
         #     userId=session_identifier,
         #     status=status
         # )
-        await send_http_callback(session_identifier,transaction_id,status_message=status)
+        await send_http_callback(session_identifier,transaction_id,orderId=orderId,status_message=status)
         #event_emitter.emit('transactionStatusUpdate', update_data)
 
         return {"message": f"Transfer complete! {transaction_id}"}
