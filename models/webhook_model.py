@@ -9,13 +9,6 @@ class CallbackData(BaseModel):
     orderId: str = Field(..., min_length=1)
     status_message: str = Field(..., min_length=1, max_length=200)
 
-class WebhookData(BaseModel):
-    event: str
-    user_id: Optional[str] = None
-    userId: Optional[str] = None
-    transaction_id: Optional[str] = None
-    transactionId: Optional[str] = None
-
 class StatusDataOrder(BaseModel):
     userOrderId: str = Field(..., min_length=1)
 
@@ -23,9 +16,19 @@ class StatusDataOrder(BaseModel):
 class StatusRecordData(BaseModel):
     # Use Field aliases to map database field names to desired output keys
     userId: str = Field(alias="user_id")
-    orderId:str = Field(alias="order_id")
+    orderId: str = Field(alias="order_id")
     transactionId: str = Field(alias="last_transaction_id")
     status_message: str = Field(alias="last_transaction_status")
+
+
+
+class WebhookData(BaseModel):
+    event: str
+    user_id: Optional[str] = None
+    userId: Optional[str] = None
+    transaction_id: Optional[str] = None
+    transactionId: Optional[str] = None
+
 
     @model_validator(mode='after')
     def check_ids_are_present(self) -> 'WebhookData':

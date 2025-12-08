@@ -19,10 +19,12 @@ async def process_status_data_v1(status_data: StatusDataOrder) -> StatusRecordDa
         # Perform the insert operation
         record_dict = await calls_collection.find_one(
             filter={"order_id": status_data.userOrderId},
-            # sort=[("updated_at", -1)],  # -1 for descending (newest first)
+            sort=[("updated_at", -1)],  # -1 for descending (newest first)
             projection=projection
 
         )
+
+        print(record_dict)
         
 
                 # If a record is found, parse it directly into our lean model
